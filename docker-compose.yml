@@ -7,7 +7,7 @@ services:
     environment:
       POSTGRES_USER: omero
       POSTGRES_DB: omero
-      POSTGRES_PASSWORD: omero
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     networks:
       - omero
     volumes:
@@ -20,9 +20,9 @@ services:
     environment:
       CONFIG_omero_db_host: database
       CONFIG_omero_db_user: omero
-      CONFIG_omero_db_pass: omero
+      CONFIG_omero_db_pass: "${OMERO_ROOT_PASSWORD}"
       CONFIG_omero_db_name: omero
-      ROOTPASS: omero
+      ROOTPASS: "${OMERO_ROOT_PASS}"
     networks:
       - omero
     ports:
