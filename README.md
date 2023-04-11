@@ -7,9 +7,14 @@ This is an example of running OMERO.server and OMERO.web in Docker.
 OMERO.server is listening on the standard OMERO ports `4063` and `4064`.
 OMERO.web is listening on port `4080` (http://localhost:4080/).
 
-Log in as user `root` password `omero`.
-The initial password can be changed in [`docker-compose.yml`](docker-compose.yml).
+## Environment file
 
+Add a .env file using the following template as reference:
+```text
+OMERO_ROOT_PASSWORD=<value 1>
+POSTGRES_PASSWORD=<value 2>
+OMERO_DB_PASSWORD=<value 3>
+```
 
 ## Run
 
