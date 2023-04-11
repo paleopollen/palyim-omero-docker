@@ -22,7 +22,7 @@ services:
       CONFIG_omero_db_user: omero
       CONFIG_omero_db_pass: "${OMERO_ROOT_PASSWORD}"
       CONFIG_omero_db_name: omero
-      ROOTPASS: "${OMERO_ROOT_PASS}"
+      ROOTPASS: "${OMERO_ROOT_PASSWORD}"
     networks:
       - omero
     ports:
