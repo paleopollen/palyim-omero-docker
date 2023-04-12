@@ -11,8 +11,18 @@ services:
     command:
       - --api.insecure=true
       - --providers.docker
+      - --entrypoints.websecure=true
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=test_resolver
       - --entrypoints.web=true
       - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=websecure
+      - --certificatesresolvers.test_resolver:true
+      - --certificatesresolvers.test_resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+#      - --certificatesresolvers.test_resolver.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.test_resolver.acme.email=${ACME_REGISTRATION_EMAIL}
+      - --certificatesresolvers.test_resolver.acme.httpchallenge.entrypoint=web
       - --log.level=DEBUG
     ports:
       # The HTTP port
