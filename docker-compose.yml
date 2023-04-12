@@ -20,8 +20,20 @@ services:
     environment:
       CONFIG_omero_db_host: database
       CONFIG_omero_db_user: omero
-      CONFIG_omero_db_pass: "${OMERO_ROOT_PASSWORD}"
+      CONFIG_omero_db_pass: "${OMERO_DB_PASSWORD}"
       CONFIG_omero_db_name: omero
+      CONFIG_omero_web_secure: "true"
+      CONFIG_omero_router_insecure: "OMERO.Glacier2/router:ssl -p 4064 -h @omero.host@"
+      CONFIG_omero_ldap_config: "true"
+      CONFIG_omero_ldap_urls: "ldaps://ldap.ncsa.illinois.edu:636"
+      CONFIG_omero_ldap_base: "dc=ncsa,dc=illinois,dc=edu"
+      CONFIG_omero_ldap_group__filter: "(objectClass=groupOfUniqueNames)"
+      CONFIG_omero_ldap_group__mapping: "name=cn"
+      CONFIG_omero_ldap_new__user__group: "palyim-default"
+      CONFIG_omero_ldap_new__user__group_owner: "sandeeps"
+      CONFIG_omero_ldap_sync__on__login: "false"
+      CONFIG_omero_ldap_user__filter: "(&(objectClass=person)(memberOf=cn=grp_palyim_omero_users,ou=groups,dc=ncsa,dc=illinois,dc=edu))"
+      CONFIG_omero_ldap_user__mapping: "omeName=uid,firstName=givenName,middleName=middleName,lastName=sn,email=mail"
       ROOTPASS: "${OMERO_ROOT_PASSWORD}"
     networks:
       - omero
