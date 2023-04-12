@@ -81,7 +81,7 @@ services:
     networks:
       - omero
     labels:
-      - "traefik.http.routers.omeroweb.rule=Host(`web.omero.localhost`)"
+      - "traefik.http.routers.omeroweb.rule=Host(`palyim-omero-dev.ncsa.illinois.edu`)"
       - "traefik.http.routers.omeroweb.entrypoints=web"
       - "traefik.http.services.omeroweb.loadbalancer.server.port=4080"
 
