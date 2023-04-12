@@ -2,8 +2,33 @@ version: "3"
 
 services:
 
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.9
+    container_name: palyim-traefik
+    restart: unless-stopped
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --entrypoints.web=true
+      - --entrypoints.web.address=:80
+      - --log.level=DEBUG
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - omero
+
   database:
     image: "postgres:11"
+    container_name: palyim-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: omero
       POSTGRES_DB: omero
@@ -17,6 +42,8 @@ services:
     # This container uses the tag for the latest server release of OMERO 5
     # To upgrade to the next major release, increment the major version number
     image: "openmicroscopy/omero-server:5"
+    container_name: palyim-omeroserver
+    restart: unless-stopped
     environment:
       CONFIG_omero_db_host: database
       CONFIG_omero_db_user: omero
@@ -47,12 +74,16 @@ services:
     # This container uses the tag for the latest web release of OMERO 5
     # To upgrade to the next major release, increment the major version number
     image: "openmicroscopy/omero-web-standalone:5"
+    container_name: palyim-omeroweb
+    restart: unless-stopped
     environment:
       OMEROHOST: omeroserver
     networks:
       - omero
-    ports:
-      - "4080:4080"
+    labels:
+      - "traefik.http.routers.omeroweb.rule=Host(`web.omero.localhost`)"
+      - "traefik.http.routers.omeroweb.entrypoints=web"
+      - "traefik.http.services.omeroweb.loadbalancer.server.port=4080"
 
 networks:
   omero:
