@@ -12,7 +12,7 @@ services:
       - --api.insecure=true
       - --providers.docker
       - --certificatesresolvers.test_resolver:true
-      - --certificatesresolvers.test_resolver.acme.caserver=https://acme-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.test_resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
       - --certificatesresolvers.test_resolver.acme.email=${ACME_REGISTRATION_EMAIL}
       - --certificatesresolvers.test_resolver.acme.httpchallenge.entrypoint=web
       - --entrypoints.websecure=true
@@ -58,7 +58,7 @@ services:
     environment:
       CONFIG_omero_db_host: database
       CONFIG_omero_db_user: omero
-      CONFIG_omero_db_pass: "${OMERO_DB_PASSWORD}"
+      CONFIG_omero_db_pass: "${POSTGRES_PASSWORD}"
       CONFIG_omero_db_name: omero
       CONFIG_omero_web_secure: "true"
       CONFIG_omero_router_insecure: "OMERO.Glacier2/router:ssl -p 4064 -h @omero.host@"
