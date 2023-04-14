@@ -12,7 +12,7 @@ services:
       - --api.insecure=true
       - --providers.docker
       - --certificatesresolvers.test_resolver:true
-      - --certificatesresolvers.test_resolver.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory
+      - --certificatesresolvers.test_resolver.acme.caserver=${ACME_CA_SERVER_URL}
       - --certificatesresolvers.test_resolver.acme.email=${ACME_REGISTRATION_EMAIL}
       - --certificatesresolvers.test_resolver.acme.httpchallenge.entrypoint=web
       - --entrypoints.websecure=true
@@ -92,7 +92,7 @@ services:
     networks:
       - omero
     labels:
-      - "traefik.http.routers.omeroweb.rule=Host(`palyim-omero-dev.ncsa.illinois.edu`)"
+      - "traefik.http.routers.omeroweb.rule=Host(`${HOSTNAME}`)"
       - "traefik.http.routers.omeroweb.entrypoints=web,websecure"
       - "traefik.http.services.omeroweb.loadbalancer.server.port=4080"
 

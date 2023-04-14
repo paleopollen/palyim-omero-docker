@@ -14,6 +14,8 @@ Add a .env file using the following template as reference:
 OMERO_ROOT_PASSWORD=<value 1>
 POSTGRES_PASSWORD=<value 2>
 ACME_REGISTRATION_EMAIL=<value 3>
+ACME_CA_SERVER_URL=<value 4>
+HOSTNAME=<value 5>
 ```
 
 ## Run
