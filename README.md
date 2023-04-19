@@ -1,21 +1,18 @@
-# OMERO.server and OMERO.web (docker-compose)
+# PALYIM's OMERO.server and OMERO.web (docker-compose)
 
-[![Actions Status](https://github.com/ome/docker-example-omero/workflows/Build/badge.svg)](https://github.com/ome/docker-example-omero/actions)
+[![Actions Status](https://github.com/paleopollen/palyim-omero-docker/workflows/Build/badge.svg)](https://github.com/paleopollen/palyim-omero-docker/actions)
 
-This is an example of running OMERO.server and OMERO.web in Docker.
-
-OMERO.server is listening on the standard OMERO ports `4063` and `4064`.
-OMERO.web is listening on port `4080` (http://localhost:4080/).
+This repository contains configuration for OMERO.server and OMERO.web in Docker.
 
 ## Environment file
 
 Add a .env file using the following template as reference:
 ```text
-OMERO_ROOT_PASSWORD=<value 1>
-POSTGRES_PASSWORD=<value 2>
-ACME_REGISTRATION_EMAIL=<value 3>
-ACME_CA_SERVER_URL=<value 4>
-HOSTNAME=<value 5>
+OMERO_ROOT_PASSWORD=omero
+POSTGRES_PASSWORD=omero
+ACME_REGISTRATION_EMAIL=admin@example.com
+ACME_CA_SERVER_URL=https://acme-staging-v02.api.letsencrypt.org/directory
+HOSTNAME=web.omero.localhost
 ```
 
 ## Run
@@ -28,6 +25,9 @@ Then start the containers:
 
     docker-compose up -d
     docker-compose logs -f
+
+OMERO.server is listening on the SSL port `4064`.
+OMERO.web is listening on port `80` (http://web.omero.localhost/).
 
 For more configuration options see:
 - https://github.com/ome/omero-server-docker/blob/master/README.md
