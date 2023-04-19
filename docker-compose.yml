@@ -28,8 +28,8 @@ services:
       - "80:80"
       # The HTTPS port
       - "443:443"
-      # The Web UI (enabled by --api.insecure=true)
-      - "8080:8080"
+      # The Web UI (enabled by --api.insecure=true) - accessible only from localhost
+      - "127.0.0.1:8080:8080"
     volumes:
       # So that Traefik can listen to the Docker events
       - /var/run/docker.sock:/var/run/docker.sock
@@ -76,7 +76,6 @@ services:
     networks:
       - omero
     ports:
-      - "4063:4063"
       - "4064:4064"
     volumes:
       - "omero:/OMERO"
