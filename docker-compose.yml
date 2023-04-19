@@ -2,12 +2,48 @@ version: "3"
 
 services:
 
+  reverse-proxy:
+    # The official v2 Traefik docker image
+    image: traefik:v2.9
+    container_name: palyim-traefik
+    restart: unless-stopped
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --certificatesresolvers.test_resolver:true
+      - --certificatesresolvers.test_resolver.acme.caserver=${ACME_CA_SERVER_URL:-https://acme-staging-v02.api.letsencrypt.org/directory}
+      - --certificatesresolvers.test_resolver.acme.email=${ACME_REGISTRATION_EMAIL:-admin@example.com}
+      - --certificatesresolvers.test_resolver.acme.httpchallenge.entrypoint=web
+      - --entrypoints.websecure=true
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=test_resolver
+      - --entrypoints.web=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      - --entrypoints.web.http.redirections.entrypoint.scheme=https
+      - --log.level=DEBUG
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The HTTPS port
+      - "443:443"
+      # The Web UI (enabled by --api.insecure=true) - accessible only from localhost
+      - "127.0.0.1:8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - omero
+
   database:
     image: "postgres:11"
+    container_name: palyim-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_USER: omero
       POSTGRES_DB: omero
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-omero}"
     networks:
       - omero
     volumes:
@@ -17,10 +53,12 @@ services:
     # This container uses the tag for the latest server release of OMERO 5
     # To upgrade to the next major release, increment the major version number
     image: "openmicroscopy/omero-server:5"
+    container_name: palyim-omeroserver
+    restart: unless-stopped
     environment:
       CONFIG_omero_db_host: database
       CONFIG_omero_db_user: omero
-      CONFIG_omero_db_pass: "${OMERO_DB_PASSWORD}"
+      CONFIG_omero_db_pass: "${POSTGRES_PASSWORD:-omero}"
       CONFIG_omero_db_name: omero
       CONFIG_omero_web_secure: "true"
       CONFIG_omero_router_insecure: "OMERO.Glacier2/router:ssl -p 4064 -h @omero.host@"
@@ -34,11 +72,10 @@ services:
       CONFIG_omero_ldap_sync__on__login: "false"
       CONFIG_omero_ldap_user__filter: "(&(objectClass=person)(memberOf=cn=grp_palyim_omero_users,ou=groups,dc=ncsa,dc=illinois,dc=edu))"
       CONFIG_omero_ldap_user__mapping: "omeName=uid,firstName=givenName,middleName=middleName,lastName=sn,email=mail"
-      ROOTPASS: "${OMERO_ROOT_PASSWORD}"
+      ROOTPASS: "${OMERO_ROOT_PASSWORD:-omero}"
     networks:
       - omero
     ports:
-      - "4063:4063"
       - "4064:4064"
     volumes:
       - "omero:/OMERO"
@@ -47,12 +84,16 @@ services:
     # This container uses the tag for the latest web release of OMERO 5
     # To upgrade to the next major release, increment the major version number
     image: "openmicroscopy/omero-web-standalone:5"
+    container_name: palyim-omeroweb
+    restart: unless-stopped
     environment:
       OMEROHOST: omeroserver
     networks:
       - omero
-    ports:
-      - "4080:4080"
+    labels:
+      - "traefik.http.routers.omeroweb.rule=Host(`${HOSTNAME:-web.omero.localhost}`)"
+      - "traefik.http.routers.omeroweb.entrypoints=web,websecure"
+      - "traefik.http.services.omeroweb.loadbalancer.server.port=4080"
 
 networks:
   omero:
