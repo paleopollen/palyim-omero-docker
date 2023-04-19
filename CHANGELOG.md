@@ -13,5 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Move example credentials to .env file and update the default values. [#13](https://github.com/paleopollen/palyim-issues/issues/13)
+- Update docker compose file and README for dev deployment. [#10](https://github.com/paleopollen/palyim-issues/issues/10)
 
 [unreleased]: https://github.com/olivierlacan/keep-a-changelog/compare/v0.1.0...HEAD
