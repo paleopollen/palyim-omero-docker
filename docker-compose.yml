@@ -12,8 +12,8 @@ services:
       - --api.insecure=true
       - --providers.docker
       - --certificatesresolvers.test_resolver:true
-      - --certificatesresolvers.test_resolver.acme.caserver=${ACME_CA_SERVER_URL}
-      - --certificatesresolvers.test_resolver.acme.email=${ACME_REGISTRATION_EMAIL}
+      - --certificatesresolvers.test_resolver.acme.caserver=${ACME_CA_SERVER_URL:-https://acme-staging-v02.api.letsencrypt.org/directory}
+      - --certificatesresolvers.test_resolver.acme.email=${ACME_REGISTRATION_EMAIL:-admin@example.com}
       - --certificatesresolvers.test_resolver.acme.httpchallenge.entrypoint=web
       - --entrypoints.websecure=true
       - --entrypoints.websecure.address=:443
@@ -43,7 +43,7 @@ services:
     environment:
       POSTGRES_USER: omero
       POSTGRES_DB: omero
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-omero}"
     networks:
       - omero
     volumes:
@@ -58,7 +58,7 @@ services:
     environment:
       CONFIG_omero_db_host: database
       CONFIG_omero_db_user: omero
-      CONFIG_omero_db_pass: "${POSTGRES_PASSWORD}"
+      CONFIG_omero_db_pass: "${POSTGRES_PASSWORD:-omero}"
       CONFIG_omero_db_name: omero
       CONFIG_omero_web_secure: "true"
       CONFIG_omero_router_insecure: "OMERO.Glacier2/router:ssl -p 4064 -h @omero.host@"
@@ -72,7 +72,7 @@ services:
       CONFIG_omero_ldap_sync__on__login: "false"
       CONFIG_omero_ldap_user__filter: "(&(objectClass=person)(memberOf=cn=grp_palyim_omero_users,ou=groups,dc=ncsa,dc=illinois,dc=edu))"
       CONFIG_omero_ldap_user__mapping: "omeName=uid,firstName=givenName,middleName=middleName,lastName=sn,email=mail"
-      ROOTPASS: "${OMERO_ROOT_PASSWORD}"
+      ROOTPASS: "${OMERO_ROOT_PASSWORD:-omero}"
     networks:
       - omero
     ports:
@@ -91,7 +91,7 @@ services:
     networks:
       - omero
     labels:
-      - "traefik.http.routers.omeroweb.rule=Host(`${HOSTNAME}`)"
+      - "traefik.http.routers.omeroweb.rule=Host(`${HOSTNAME:-web.omero.localhost}`)"
       - "traefik.http.routers.omeroweb.entrypoints=web,websecure"
       - "traefik.http.services.omeroweb.loadbalancer.server.port=4080"
 
