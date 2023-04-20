@@ -6,7 +6,7 @@ This repository contains configuration for OMERO.server and OMERO.web in Docker.
 
 ## Environment file
 
-Add a .env file using the following template as reference:
+Add a .env file using the following template as reference. Please note that these values are only priovided as an example and should NOT be used in any deployed instances:
 ```text
 OMERO_ROOT_PASSWORD=omero
 POSTGRES_PASSWORD=omero
