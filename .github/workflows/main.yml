@@ -15,5 +15,5 @@ jobs:
       - name: Test
         run: ./test.sh
       - name: Check logs
-        run: docker-compose logs
+        run: docker compose logs
         if: ${{ failure() }}
